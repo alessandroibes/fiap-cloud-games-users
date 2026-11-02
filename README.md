@@ -4,18 +4,44 @@ Cadastro, login JWT, administração de usuários e UserCreatedEvent com Outbox.
 
 ## Estado
 
-Preparação documental G0 em 30/10/2026. Ainda não há aplicação executável, Dockerfile ou manifests Kubernetes. Nenhum teste de aplicação foi executado. Os gates seguintes entregarão essas capacidades com evidências.
+G2 implementado e validado em 02/11/2026: .NET 8, PostgreSQL/EF Core, JWT com papéis, cadastro e administração, bootstrap explícito e publicação transacional de UserCreatedEvent por MassTransit/RabbitMQ. 28 testes aprovados; imagem Docker executada localmente. [Evidências e limites da validação](docs/quality/g2-validation.md).
+
+Boas-vindas de produção dependem de Notifications no G5; integração completa no G6 e manifests /k8s no G7, usando Docker Desktop Kubernetes.
 
 ## Documentação
 
 - [ADRs aceitos](docs/architecture/decisions/README.md).
 - [Decisões funcionais confirmadas](docs/architecture/functional-decisions.md).
 - [Especificação de referência](docs/specification.md).
-- Contratos canônicos e roadmap: repositório fiap-cloud-games-infrastructure, docs/contracts/v1/ e docs/implementation/roadmap.md. Tipos C# serão locais, sem dependência de projetos irmãos.
+- [Contratos HTTP](docs/http-api.md), [UserCreatedEvent V1](docs/contracts/v1/user-created-v1.md) e [operação local](docs/operations.md).
+- Contratos canônicos e roadmap: repositório fiap-cloud-games-infrastructure, docs/contracts/v1/ e docs/implementation/roadmap.md. Tipos C# locais, sem dependência de projetos irmãos.
 
 ## Execução e configuração
 
-Comandos, variáveis, migrations, Docker e Kubernetes serão documentados quando implementados e verificados. PostgreSQL isolado por serviço persistente, RabbitMQ/MassTransit e Docker Desktop Kubernetes são decisões aprovadas. Migrations serão explícitas antes das APIs. Não utilizar SQLite ou Kind.
+Com a infraestrutura G1 em execução, na raiz deste repositório:
+
+```powershell
+./scripts/Initialize-Local.ps1
+docker compose build users
+docker compose run --rm users --migrate
+docker compose run --rm users --bootstrap
+docker compose up -d users
+```
+
+API em http://localhost:5081; saúde em /health/live e /health/ready. Configurações geradas em .env ignorado pelo Git. Não há migration automática no startup. Consulte [operação](docs/operations.md) para execução pelo SDK, configuração e uso seguro dos segredos.
+
+```powershell
+./scripts/Validate-G2.ps1
+```
+
+A validação utiliza PostgreSQL e RabbitMQ exclusivos dos testes e interrompe somente o broker de testes para verificar recuperação. Não executar suítes simultâneas nesse ambiente.
+
+## Organização
+
+- src/: Domain (regras), Application (casos de uso), Infrastructure (persistência, JWT, hash e Outbox), Api (HTTP) e Contracts (evento V1).
+- tests/: domínio, contrato com assembly consumidor independente e integração HTTP/PostgreSQL/RabbitMQ.
+- scripts/: preparação local, comandos explícitos e validação reproduzível.
+- Dockerfile multi-stage e compose.yaml: imagem local sem usuário privilegiado, conectada à infraestrutura G1.
 
 ## Git e segurança
 

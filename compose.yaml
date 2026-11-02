@@ -1,0 +1,26 @@
+name: fcg-users-local
+services:
+  users:
+    image: fiap-cloud-games-users:local
+    build: .
+    environment:
+      ConnectionStrings__Users: ${USERS_DOCKER_CONNECTION:?Configure .env}
+      Jwt__Key: ${Jwt__Key:?Configure .env}
+      Jwt__Issuer: ${Jwt__Issuer:-fiap-cloud-games-users}
+      Jwt__Audience: ${Jwt__Audience:-fiap-cloud-games}
+      Jwt__ExpirationMinutes: 60
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: 5672
+      RabbitMq__VirtualHost: fcg
+      RabbitMq__Username: ${RabbitMq__Username:?Configure .env}
+      RabbitMq__Password: ${RabbitMq__Password:?Configure .env}
+      AdminBootstrap__Name: ${AdminBootstrap__Name:-}
+      AdminBootstrap__Email: ${AdminBootstrap__Email:-}
+      AdminBootstrap__Password: ${AdminBootstrap__Password:-}
+    ports: ["127.0.0.1:5081:8080"]
+    networks: [fcg]
+    restart: unless-stopped
+networks:
+  fcg:
+    external: true
+    name: fiap-cloud-games_default
