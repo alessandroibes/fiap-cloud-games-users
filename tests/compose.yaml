@@ -23,7 +23,7 @@ services:
     ports: ["127.0.0.1:${TEST_RABBIT_PORT:-5673}:5672"]
     volumes: ["users-test-broker:/var/lib/rabbitmq"]
     healthcheck:
-      test: [CMD, rabbitmq-diagnostics, -q, check_running]
+      test: [CMD, gosu, rabbitmq, rabbitmq-diagnostics, -q, check_running]
       interval: 3s
       timeout: 10s
       retries: 30
