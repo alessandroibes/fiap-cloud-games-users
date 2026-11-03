@@ -6,7 +6,7 @@ Cadastro, login JWT, administração de usuários e UserCreatedEvent com Outbox.
 
 G2 implementado e validado em 02/11/2026: .NET 8, PostgreSQL/EF Core, JWT com papéis, cadastro e administração, bootstrap explícito e publicação transacional de UserCreatedEvent por MassTransit/RabbitMQ. 28 testes aprovados; imagem Docker executada localmente. [Evidências e limites da validação](docs/quality/g2-validation.md).
 
-Boas-vindas de produção dependem de Notifications no G5; integração completa no G6 e manifests /k8s no G7, usando Docker Desktop Kubernetes.
+Boas-vindas integradas com Notifications; Compose validado no G6 e Kubernetes Docker Desktop no G7.
 
 ## Documentação
 
@@ -46,3 +46,7 @@ A validação utiliza PostgreSQL e RabbitMQ exclusivos dos testes e interrompe s
 ## Git e segurança
 
 Clone independente fornecido pelo responsável; manter o origin existente. Commits separados, sem push ou publicação de imagens sem autorização. Documentação técnica é versionada. AGENTS.md, specs/, .codex/ e docs/course/ são locais e ignorados; segredos fora do Git.
+
+## Kubernetes local
+
+Manifestos e sequência de implantação em [k8s/README.md](k8s/README.md). G7 concluído; [evidências deste serviço](docs/quality/g7-validation.md) e registro transversal na infraestrutura.
